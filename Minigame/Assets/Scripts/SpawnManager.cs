@@ -4,35 +4,43 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
+    public bool isGameActive = false;
     public float areaRange = 20f;
     public int coinAmount = 10;
     public GameObject collectibleObject;
-    public GameObject enemyObject;
+    public GameObject ememyObject;
 
     // Start is called before the first frame update
     void Start()
     {
-        SpawnRandomEnemy();
+        //SpawnRandomEnemy();
+        //StartCoroutine(CreateRandomAmountOfEnemies());
         SpawnCollectibleObject();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void StartSpawner()
     {
-        
+        isGameActive = true;
+        StartCoroutine(CreateRandomAmountOfEnemies());
+    }
+
+    public void StopSpawner()
+    {
+        isGameActive = false;
     }
 
     void SpawnRandomEnemy()
     {
-        Instantiate(enemyObject, new Vector3(0, 1, 5), enemyObject.transform.rotation);
+        Instantiate(ememyObject, CreateRandomSpawnPosition(), ememyObject.transform.rotation);
     }
 
-    void SpawnCollectibleObject()
+    public void SpawnCollectibleObject()
     {
-        for(int i = 0; i < coinAmount; i++)
+        for (int i = 0; i < coinAmount; i++)
         {
             Instantiate(collectibleObject, CreateRandomSpawnPosition(), collectibleObject.transform.rotation);
         }
+        coinAmount = 1;
     }
 
     Vector3 CreateRandomSpawnPosition()
@@ -43,4 +51,20 @@ public class SpawnManager : MonoBehaviour
 
         return randomPosition;
     }
+
+    IEnumerator CreateRandomAmountOfEnemies()
+    {
+        while (isGameActive)
+        {
+            int amountOfTime = Random.Range(1, 8);
+            yield return new WaitForSeconds(amountOfTime);
+
+            int amountOfEnemies = Random.Range(1, 3);
+            for (int i = 0; i < amountOfEnemies; i++)
+            {
+                SpawnRandomEnemy();
+            }
+        }
+    }
+
 }
